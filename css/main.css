@@ -1,16 +1,9 @@
-html,
 body {
     margin: 0;
     padding: 0;
     background: #eee;
     font-family: 'Lato', sans-serif;
     color: #333;
-    /*the cursor doesn't change and the numbers on buttons won't get highlighted*/
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    cursor: default;
 }
 
 .text-center {
@@ -25,14 +18,22 @@ body {
     float: left;
 }
 
-table {
-    margin: auto;
-    /*border-spacing: 0;*/
-    /*display: inline;*/
+input {
+    width: 195px;
 }
 
-td input {
-    margin: 0;
+table {
+    margin: auto;
+}
+
+table td {
+    max-width: 200px;
+    word-wrap: break-word;
+}
+
+table tr {
+    margin-top: 20px;
+    padding-top: 10px;
 }
 
 a {
@@ -56,27 +57,5 @@ hr {
 }
 
 footer {
-    clear: both;
     text-align: center;
-}
-
-
-@media screen and (max-width: 610px) {
-  header {
-    height: 113px;
-    padding-bottom: 80px !important;
-  }
-  #user-container {
-    top: 72px;
-    background-color: rgb(3,155,229);
-    height: 38px;
-    padding-top: 3px;
-    padding-right: 2px;
-  }
-  #user-container #user-pic {
-    top: 2px;
-    width: 33px;
-    height: 33px;
-    background-size: 33px;
-  }
 }

@@ -1,4 +1,5 @@
 'use strict';
+
 function KimsListe() {
 
   // Get element from DOM
@@ -8,18 +9,19 @@ function KimsListe() {
   this.partSize = document.getElementById('partSize');
   this.partLength = document.getElementById('partLength');
   this.addBtn = document.getElementById('addBtn');
+  this.cncProductsList = document.getElementById('cncProductsList');
+
+  this.initFirebase();
+  this.loadCncProducts();
 
   // save cncProduct when the button 'tilføj' is clicked
   this.addBtn.addEventListener('click', this.saveCncProduct.bind(this));
-
-  this.initFirebase();
 }
 
 // Sets up shortcuts to Firebase features.
 KimsListe.prototype.initFirebase = function () {
   // Shortcuts to Firebase SDK features.
   this.db = firebase.database();
-
   // Create references to database 
   this.dbRefCncProducts = this.db.ref('cncProducts');
 };
@@ -27,17 +29,51 @@ KimsListe.prototype.initFirebase = function () {
 
 // Loads cncProducts and listens for upcoming ones.
 KimsListe.prototype.loadCncProducts = function () {
+  // Make sure we remove all previous listeners.
+  this.dbRefCncProducts.off();
+  // Loads all cncProducts and listen for new ones.
+  var setAllCncProducts = function (data) {
+    var key = data.key;
+    var val = data.val();
+    this.displayCncProduct(key, val.partNumber, val.partName, val.materialType, val.partSize, val.partLength);
+  }.bind(this);
+  this.dbRefCncProducts.on('child_added', setAllCncProducts);
+  this.dbRefCncProducts.on('child_changed', setAllCncProducts);
+};
 
-	// Make sure we remove all previous listeners.
-	this.dbRefCncProducts.off();
+// Template for cncProduct.
+KimsListe.CNCPRODUCT_TEMPLATE =
+  '<tr class="cncProduct-container">' +
+  '<td class="partNumber"></td>' +
+  '<td class="partName"></td>' +
+  '<td class="materialType"></td>' +
+  '<td class="partSize"></td>' +
+  '<td class="partLength"></td>' +
+  '</tr>';
 
-	// Loads the last 12 messages and listen for new ones.
-	var setMessage = function (data) {
-		var val = data.val();
-		this.displayMessage(data.key, val.name, val.text, val.photoUrl, val.imageUrl);
-	}.bind(this);
-	this.dbRefCncProducts.on('child_added', setMessage);
-	this.dbRefCncProducts.on('child_changed', setMessage);
+// displaying cncProducts from database on the screan
+KimsListe.prototype.displayCncProduct = function (key, partNumber, partName, materialType, partSize, partLength) {
+  var tr = document.getElementById(key);
+  // If an element for that cncProduct does not exists create one.
+  if (!tr) {
+     tr = document.createElement('tr');
+    tr.innerHTML = KimsListe.CNCPRODUCT_TEMPLATE;
+    tr.setAttribute('id', key);
+    this.cncProductsList.appendChild(tr);
+  }
+
+  tr.querySelector('.partNumber').textContent = partNumber;
+  tr.querySelector('.partName').textContent = partName;
+  tr.querySelector('.materialType').textContent = materialType;
+  tr.querySelector('.partSize').textContent = partSize;
+  tr.querySelector('.partLength').textContent = partLength;
+
+  // Show the cncProduct fading-in.
+  setTimeout(function () {
+    tr.classList.add('visible')
+  }, 1);
+  this.cncProductsList.scrollTop = this.cncProductsList.scrollHeight;
+  this.partNumber.focus();
 };
 
 
@@ -66,11 +102,6 @@ KimsListe.prototype.saveCncProduct = function (e) {
   }
 }
 
-
-
-
-
-
 // resets form fields values
 KimsListe.prototype.resetForm = function () {
   this.partNumber.value = '';
@@ -80,28 +111,7 @@ KimsListe.prototype.resetForm = function () {
   this.partLength.value = '';
 }
 
-// getting product from database and display on the screan
-KimsListe.prototype.showRows = function (snapshot) {
 
-  snapshot.forEach(function (childSnapshot) {
-    var childKey = childSnapshot.key;
-    var childData = childSnapshot.val();
-
-    var row = tbody.insertRow();
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
-    var cell5 = row.insertCell(4);
-    cell1.innerHTML = childData.partNumber;
-    cell2.innerHTML = childData.name;
-    cell3.innerHTML = childData.materialType;
-    cell4.innerHTML = childData.size;
-    cell5.innerHTML = childData.length;
-
-    // console.log(childKey, childData);
-  });
-}
 
 // // Sync database changes
 // db.ref().on('value', function (snapshot) {
