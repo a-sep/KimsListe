@@ -24,25 +24,21 @@
                 <th>ACTION</th>
             </tr>
             <tr>
-                <td><input type="text" placeholder="varenummer" name="partNumber" value="" id="partNumber"></td>
-                <td><input type="text" placeholder="varenavn" name="partName" value="" id="partName"></td>
-                <td><input type="text" placeholder="material" name="materialType" value="" id="materialType"></td>
-                <td><input type="text" placeholder="diameter" name="partSize" value="" id="partSize"></td>
-                <td><input type="text" placeholder="længde" name="partLength" value="" id="partLength"></td>
-                <td><button type="submit" id="addBtn">ADD</button></td>
+                <form action="#">
+                    <td><input type="text" placeholder="varenummer" name="partNumber" value="" required id="partNumber"></td>
+                    <td><input type="text" placeholder="varenavn" name="partName" value="" required id="partName"></td>
+                    <td><input type="text" placeholder="material" name="materialType" value="" required id="materialType"></td>
+                    <td><input type="text" placeholder="diameter" name="partSize" required value="" id="partSize"></td>
+                    <td><input type="text" placeholder="længde" name="partLength" required value="" id="partLength"></td>
+                    <td><button type="submit" id="addBtn">ADD</button></td>
+                </form>
             </tr>
-    
         </thead>
         <tbody id="cncProductsList">
-    
         </tbody>
     </table>
-
-
-<div id="baza">
-    
-</div>
-
+    <div id="baza">
+    </div>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
@@ -58,7 +54,6 @@
        firebase.initializeApp(config);
     </script>
     <script src="js/app.js"></script>-->
-    
     <script src="js/main.js"></script>
     <noscript>
         <h3>This site requires JavaScript :)</h3>

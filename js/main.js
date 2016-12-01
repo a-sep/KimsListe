@@ -11,14 +11,14 @@
 
     // get elements
     var tbody = document.getElementById('cncProductsList');
-    var addBtn = document.getElementById('addBtn');
     var partNumber = document.getElementById('partNumber');
     var partName = document.getElementById('partName');
     var materialType = document.getElementById('materialType');
     var partSize = document.getElementById('partSize');
     var partLength = document.getElementById('partLength');
+    var addBtn = document.getElementById('addBtn');
 
-    addBtn.addEventListener('click', addTodatabase);
+    addBtn.addEventListener('click', addToDatabase);
 
 
     var CNCPRODUCT_TEMPLATE =
@@ -50,17 +50,11 @@
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
-        //--------------------------------------------------------
-        //  var tr = document.createElement('tr');
-        // tr.id = snap.key;
-        // snap.forEach(function (childSnapshot) {
-        //     var td = document.createElement('td');
-        //     td.className = childSnapshot.key;
-        //     td.innerText = childSnapshot.val();
-        //     tr.appendChild(td);
-        // });
-        // tbody.appendChild(tr);
-        //-------------------------------------------------------
+        tr.querySelector('.deleteBtn').addEventListener('click', function () {
+            deleteProductFromDatabase(snap);
+        });
+        tr.querySelector('.editBtn').addEventListener('click', editProductFromDatabase);
+
     });
 
     // updates html list when editing
@@ -81,10 +75,21 @@
 
 
     // adding a new product to database
-    function addTodatabase() {
+    function addToDatabase() {
         // Check all fields in form
-        if (testForm) {
-            // Add a new product entry to the Firebase Database.Using push give us a uniq key for each product.
+
+        // console.log(partNumber.value !== "", partName.value !== "", materialType.value !== "", partSize.value !== "", partLength.value !== "");
+        // console.log('test ', testForm);
+
+        // TODO validating a form with regExp. !!!
+
+        if (partNumber.value === " " || partName.value === " " || materialType.value === " " || partSize.value === " " || partLength.value === " ") {
+            console.log('...ups - entry correct values');
+            return;
+        }
+
+        if (partNumber.value !== "" && partName.value !== "" && materialType.value !== "" && partSize.value !== "" && partLength.value !== "") {
+            // Add a new product entry to the Firebase Database. Using push give us a uniq key for each product.
             dbRefList.push({
                 partNumber: partNumber.value,
                 partName: partName.value,
@@ -102,6 +107,23 @@
         }
     }
 
+
+
+
+    // deleting product from database
+    function deleteProductFromDatabase(snap) {
+
+        if (window.confirm("Vil Du fjerne dette produkt?")) {
+            var trRef = dbRefList.child(snap.key);
+            trRef.remove();
+        }
+    }
+
+    // editing product from database
+    function editProductFromDatabase() {
+        console.log('edit');
+    }
+
     // resets form fields values
     function resetForm() {
         partNumber.value = '';
@@ -111,13 +133,14 @@
         partLength.value = '';
     }
 
+
+    // CZEMU TO NIE DZIALA !!!
     function testForm() {
-        if (partNumber.value !== "" & partName.value !== "" & materialType.value !== "" & partSize.value !== "" & partLength.value !== "") {
-            return true;
-        } else {
+        if (partNumber.value === "" || partName.value === "" || materialType.value === "" || partSize.value === "" || partLength.value === "") {
             return false;
         }
-    }
+        return true;
+    };
 
 
 
