@@ -1,6 +1,7 @@
+"use strict";
 (function () {
 
-    var config = {
+    let config = {
         apiKey: "AIzaSyC_m6VaHDvrIRr3IlDPoMTKPZYE64NEGkw",
         authDomain: "kimsliste-ccf6a.firebaseapp.com",
         databaseURL: "https://kimsliste-ccf6a.firebaseio.com",
@@ -9,57 +10,137 @@
     };
     firebase.initializeApp(config);
 
+// create database references
+    let dbRefList = firebase.database().ref().child('cncProducts');
 
-    // get elements
-    var tbody = document.getElementById('cncProductsList');
-    var partNumber = document.getElementById('partNumber');
-    var partName = document.getElementById('partName');
-    var materialType = document.getElementById('materialType');
-    var partSize = document.getElementById('partSize');
-    var partLength = document.getElementById('partLength');
-    var addBtn = document.getElementById('addBtn');
-    var resetBtn = document.getElementById('resetBtn');
+// get elements
+    let partNumber = document.getElementById('partNumber');
+    let partName = document.getElementById('partName');
+    let materialType = document.getElementById('materialType');
+    let partSize = document.getElementById('partSize');
+    let partLength = document.getElementById('partLength');
+    let addBtn = document.getElementById('addBtn');
+    let searchBtn = document.getElementById('searchBtn');
+    let resetBtn = document.getElementById('resetBtn');
+    let tbody = document.getElementById('cncProductsList');
+    let trSorting = document.getElementById('trSorting');
 
     addBtn.addEventListener('click', addToDatabase);
+    searchBtn.addEventListener('click', e => findEntryByColumn(sortingByColumnValue));
     resetBtn.addEventListener('click', resetForm);
 
     tbody.addEventListener('click', function (e) {
-
-        // deleting product from database 
+        // deleting product from database
         if (e.target.className === 'deleteBtn') {
-            var key = e.target.parentNode.id;
+            let key = e.target.parentNode.id;
             console.log('delete key', key);
             deleteProductFromDatabase(key);
         }
         // editing data of produkt
-        // po kliknieciu w pole td odpalic edycje tego pola i po nacisnieciu entera poslac wpis do bazy
         if (e.target.className !== 'deleteBtn') {
-            var trKey = e.target.parentNode.id;
-            var tdClass = e.target.className;
-            var tdTextContent = e.target.textContent;
+            let trKey = e.target.parentNode.id;
+            let tdClass = e.target.className;
+            let tdTextContent = e.target.textContent;
             updateProduct(trKey, tdClass, tdTextContent);
         }
     });
 
+    let sortingByColumnValue = 'partName';
+
+    trSorting.addEventListener('click', e => {
+        // sortingByColumnValue = e.target.textContent;
+        switch (e.target.textContent) {
+            case 'Varenummer':
+                sortingByColumnValue = 'partNumber';
+                break;
+            case 'Varenavn':
+                sortingByColumnValue = 'partName';
+                break;
+            case 'Material':
+                sortingByColumnValue = 'materialType';
+                break;
+            case 'Diameter (mm)':
+                sortingByColumnValue = 'partSize';
+                break;
+            case 'Længde (mm)':
+                sortingByColumnValue = 'partLength';
+                break;
+        }
+        findEntryByColumn(sortingByColumnValue);
+        return sortingByColumnValue;
+    });
+
+    // findEntryByColumn(sortingByColumnValue); // shows all products on start
+
     function updateProduct(productKey, entryKey, entryValue) {
         // console.log("update ", productKey, entryKey, entryValue);
-        var newEntryValue = prompt(entryKey, entryValue);
+        // for at show correct messege in prompt box while editing use switch.
+        let message;
+        switch (entryKey) {
+            case 'partNumber':
+                message = 'Varenummer';
+                break;
+            case 'partName':
+                message = 'Varenavn';
+                break;
+            case 'materialType':
+                message = 'Material';
+                break;
+            case 'partSize':
+                message = 'Diameter (mm)';
+                break;
+            case 'partLength':
+                message = 'Længde (mm)';
+                break;
+            default:
+                message = 'default message from switch statment...';
+        }
+        let newEntryValue = prompt(message, entryValue);
         if (newEntryValue === null) { // if user click CANCEL
             newEntryValue = entryValue;
         }
-
         return firebase.database().ref().child('cncProducts').child(productKey).child(entryKey)
             .set(newEntryValue)
             .then(function () {
                 console.log('updated to the database');
+                findEntryByColumn(sortingByColumnValue);
+                console.log('sort in update', sortingByColumnValue);
             });
     }
 
 
-    // create database references
-    var dbRefList = firebase.database().ref().child('cncProducts');
 
-    var CNCPRODUCT_TEMPLATE =
+    function findEntryByColumn(sortingByColumnValue) {
+        clear();
+        dbRefList.orderByChild(sortingByColumnValue).once('value', gotData, errorData);
+    }
+
+    function clear() {
+        // remove all tr from tbody (clear list in html)
+        while (tbody.lastChild) {
+            tbody.removeChild(tbody.lastChild);
+        }
+        tbody.innerHTML = '';
+    }
+
+    function gotData(snap) {
+        snap.forEach(function (childSnapshot) {
+            let tr = document.createElement('tr');
+            tr.innerHTML = CNCPRODUCT_TEMPLATE;
+            tr.id = childSnapshot.key;
+            childSnapshot.forEach(function (tdValue) {
+                tr.querySelector('.' + tdValue.key).textContent = tdValue.val();
+            });
+            tbody.appendChild(tr);
+        });
+    }
+
+    function errorData(err) {
+        console.log(err);
+    }
+
+
+    let CNCPRODUCT_TEMPLATE =
         '<tr class="cncProduct-container">' +
         '<td class="partNumber"></td>' +
         '<td class="partName"></td>' +
@@ -69,48 +150,13 @@
         '<button class="deleteBtn">DELETE</button></td>' +
         '</tr>';
 
-    // updates html list after product is added to database
-    dbRefList.on('child_added', function (snap) {
-        var tr = document.createElement('tr');
-        tr.innerHTML = CNCPRODUCT_TEMPLATE;
-        tr.id = snap.key;
-        snap.forEach(function (childSnapshot) {
-            tr.querySelector('.' + childSnapshot.key).textContent = childSnapshot.val();
-        });
-        tbody.appendChild(tr);
-    });
-
-    // updates html list after editing
-    dbRefList.on('child_changed', function (snap) {
-        var trChanged = document.getElementById(snap.key);
-        snap.forEach(function (childSnapshot) {
-            trChanged.querySelector('.' + childSnapshot.key).textContent = childSnapshot.val();
-            console.log('child-changed', childSnapshot.key);
-        });
-    });
-
-    // removes product from html list after deleting from database
-    dbRefList.on('child_removed', function (snap) {
-        var trToRemove = document.getElementById(snap.key);
-        trToRemove.remove();
-    });
 
 
-    // adding a new product to database
+// adding a new product to database
     function addToDatabase() {
         // Check all fields in form
-        // TODO obgadac
-        // console.log(partNumber.value !== "", partName.value !== "", materialType.value !== "", partSize.value !== "", partLength.value !== "");
-        // console.log('test ', testForm);
 
-        // TODO validating a form with regExp. !!!
-
-        if (partNumber.value === " " || partName.value === " " || materialType.value === " " || partSize.value === " " || partLength.value === " ") {
-            console.log('...ups - entry correct values');
-            return;
-        }
-
-        if (partNumber.value !== "" && partName.value !== "" && materialType.value !== "" && partSize.value !== "" && partLength.value !== "") {
+        if (testForm()) {
             // Add a new product entry to the Firebase Database. Using push give us a uniq key for each product.
             dbRefList.push({
                 partNumber: partNumber.value,
@@ -123,23 +169,24 @@
                 resetForm();
                 partNumber.focus();
                 console.log('saved to the database');
+                findEntryByColumn(sortingByColumnValue);
             });
         } else {
-            console.log('fill up all fields to save new product');
+            console.log('...ups - entry correct values');
         }
     }
 
-    // deleting product from database
+
+// deleting product from database
     function deleteProductFromDatabase(key) {
         if (window.confirm("Vil Du fjerne dette produkt?")) {
-            var trRef = dbRefList.child(key);
+            let trRef = dbRefList.child(key);
             trRef.remove();
+            findEntryByColumn(sortingByColumnValue);
         }
     }
 
-
-
-    // resets form fields values
+// resets form fields values
     function resetForm() {
         partNumber.value = '';
         partName.value = '';
@@ -151,12 +198,18 @@
     }
 
 
-    // CZEMU TO NIE DZIALA !!!
-    // function testForm() {
-    //     if (partNumber.value === "" || partName.value === "" || materialType.value === "" || partSize.value === "" || partLength.value === "") {
-    //         return false;
-    //     }
-    //     return true;
-    // };
+    function testForm() {
+        // TODO validating a form with regExp. !!!
+
+        if (partNumber.value === " " || partName.value === " " || materialType.value === " " || partSize.value === " " || partLength.value === " ") {
+            return false;
+        }
+
+        if (partNumber.value === "" || partName.value === "" || materialType.value === "" || partSize.value === "" || partLength.value === "") {
+            return false;
+        }
+        return true;
+    }
+
 
 }());

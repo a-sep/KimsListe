@@ -8,44 +8,48 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Kim's Liste</title>
     <link href="css/main.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"/>
 </head>
 
 <body>
-    <h2 class="text-center">Kims Liste</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Varenummer</th>
-                <th>Varenavn</th>
-                <th>Material</th>
-                <th>Diameter (mm)</th>
-                <th>Længde (mm)</th>
-                <th>ACTION</th>
-            </tr>
-            <tr>
-                <td><input type="text" placeholder="varenummer" name="partNumber" value="" required id="partNumber"></td>
-                <td><input type="text" placeholder="varenavn" name="partName" value="" required id="partName"></td>
-                <td><input type="text" placeholder="material" name="materialType" value="" required id="materialType"></td>
-                <td><input type="text" placeholder="diameter" name="partSize" required value="" id="partSize"></td>
-                <td><input type="text" placeholder="længde" name="partLength" required value="" id="partLength"></td>
-                <td><input type="submit" name="" value="ADD" id="addBtn">
-                    <input type="reset" name="" value="RESET FORM" id="resetBtn">
-                </td>
-            </tr>
-        </thead>
-        <tbody id="cncProductsList">
-        </tbody>
-    </table>
-  
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
-    <script src="js/main.js"></script>
-    <noscript>
-        <h3>This site requires JavaScript :)</h3>
-    </noscript>
+<h2 class="text-center">Kims Liste</h2>
+<table>
+    <thead>
+    <tr id="trSorting">
+        <th>Varenummer</th>
+        <th>Varenavn</th>
+        <th>Material</th>
+        <th>Diameter (mm)</th>
+        <th>Længde (mm)</th>
+        <th>ACTION</th>
+    </tr>
+    <tr>
+        <td><input type="text" placeholder="varenummer" name="partNumber" value="" required id="partNumber"></td>
+        <td><input type="text" placeholder="varenavn" name="partName" value="" required id="partName"></td>
+        <td><input type="text" placeholder="material" name="materialType" value="" required id="materialType"></td>
+        <td><input type="text" placeholder="diameter af råvare" name="partSize" required value="" id="partSize"></td>
+        <td><input type="text" placeholder="længde" name="partLength" required value="" id="partLength"></td>
+        <td><input type="submit" name="" value="ADD" id="addBtn">
+            <input type="button" name="" value="SEARCH / show All" id="searchBtn">
+            <input type="reset" name="" value="RESET FORM" id="resetBtn">
+        </td>
+    </tr>
+    </thead>
+    <tbody id="cncProductsList">
+    </tbody>
+</table>
+
+<div>
+    <ul id="list"></ul>
+</div>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+<script src="js/main.js"></script>
+
+<noscript>
+    <h3>This site requires JavaScript :)</h3>
+</noscript>
 </body>
 
 </html>
