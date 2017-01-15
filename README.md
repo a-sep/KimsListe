@@ -1,5 +1,5 @@
 # Kim's Liste
-ver. 0.0.1 ...in development
+ver. 1.0.0
 
 link https://a-sep.github.io/KimsListe/
 

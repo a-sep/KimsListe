@@ -9,10 +9,13 @@
     <title>Kim's Liste</title>
     <link href="css/main.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"/>
+
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
 </head>
 
 <body>
-<h2 class="text-center">Kims Liste</h2>
+<h2 class="text-center">Kim's Liste <sub> ver. 1.0.0</sub></h2>
+<p class="text-center"><em>For at søge tryk</em> <strong>ctrl + f</strong></p>
 <table>
     <thead>
     <tr id="trSorting">
@@ -23,28 +26,28 @@
         <th>Længde (mm)</th>
         <th>ACTION</th>
     </tr>
-    <tr>
-        <td><input type="text" placeholder="varenummer" name="partNumber" value="" required id="partNumber"></td>
-        <td><input type="text" placeholder="varenavn" name="partName" value="" required id="partName"></td>
-        <td><input type="text" placeholder="material" name="materialType" value="" required id="materialType"></td>
-        <td><input type="text" placeholder="diameter af råvare" name="partSize" required value="" id="partSize"></td>
-        <td><input type="text" placeholder="længde" name="partLength" required value="" id="partLength"></td>
-        <td><input type="submit" name="" value="ADD" id="addBtn">
-            <input type="button" name="" value="SEARCH / show All" id="searchBtn">
-            <input type="reset" name="" value="RESET FORM" id="resetBtn">
-        </td>
+    <tr id="trInput">
+        <form>
+            <td><input type="text" placeholder="varenummer" name="partNumber" value="" required id="partNumber"></td>
+            <td><input type="text" placeholder="varenavn" name="partName" value="" required id="partName"></td>
+            <td><input type="text" placeholder="material" name="materialType" value="" required id="materialType"></td>
+            <td><input type="text" placeholder="diameter af råvare" name="partSize" required value="" id="partSize">
+            </td>
+            <td><input type="text" placeholder="længde" name="partLength" required value="" id="partLength"></td>
+            <td>
+                <input type="submit" name="" value="ADD" id="addBtn">
+                <input type="reset" name="" value="RESET FORM" id="resetBtn">
+                <input type="button" name="" value="REFRESH" id="searchBtn">
+            </td>
+        </form>
     </tr>
     </thead>
     <tbody id="cncProductsList">
     </tbody>
 </table>
 
-<div>
-    <ul id="list"></ul>
-</div>
 
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
 <script src="js/main.js"></script>
 
 <noscript>

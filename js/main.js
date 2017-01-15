@@ -1,5 +1,5 @@
 "use strict";
-(function () {
+(function KimsListe() {
 
     let config = {
         apiKey: "AIzaSyC_m6VaHDvrIRr3IlDPoMTKPZYE64NEGkw",
@@ -26,17 +26,22 @@
     let trSorting = document.getElementById('trSorting');
 
     addBtn.addEventListener('click', addToDatabase);
-    searchBtn.addEventListener('click', e => findEntryByColumn(sortingByColumnValue));
     resetBtn.addEventListener('click', resetForm);
+    searchBtn.addEventListener('click', function () {
+        findEntryByColumn(sortingByColumnValue);
+    });
 
-    tbody.addEventListener('click', function (e) {
+    partNumber.addEventListener('keyup', findProductUsingInput);
+
+
+    // editing and deleting
+    tbody.addEventListener('click', (e) => {
         // deleting product from database
         if (e.target.className === 'deleteBtn') {
             let key = e.target.parentNode.id;
-            console.log('delete key', key);
             deleteProductFromDatabase(key);
         }
-        // editing data of produkt
+        // editing data of product
         if (e.target.className !== 'deleteBtn') {
             let trKey = e.target.parentNode.id;
             let tdClass = e.target.className;
@@ -46,8 +51,9 @@
     });
 
     let sortingByColumnValue = 'partName';
+    findEntryByColumn(sortingByColumnValue); // shows all products on start sorted by name
 
-    trSorting.addEventListener('click', e => {
+    trSorting.addEventListener('click', (e) => {
         // sortingByColumnValue = e.target.textContent;
         switch (e.target.textContent) {
             case 'Varenummer':
@@ -74,7 +80,7 @@
 
     function updateProduct(productKey, entryKey, entryValue) {
         // console.log("update ", productKey, entryKey, entryValue);
-        // for at show correct messege in prompt box while editing use switch.
+        // for at show correct message in prompt box while editing use switch.
         let message;
         switch (entryKey) {
             case 'partNumber':
@@ -104,10 +110,8 @@
             .then(function () {
                 console.log('updated to the database');
                 findEntryByColumn(sortingByColumnValue);
-                console.log('sort in update', sortingByColumnValue);
             });
     }
-
 
 
     function findEntryByColumn(sortingByColumnValue) {
@@ -115,12 +119,17 @@
         dbRefList.orderByChild(sortingByColumnValue).once('value', gotData, errorData);
     }
 
+    function findProductUsingInput(event) {
+        console.log('find input', event.key, partNumber.value, 'content', partNumber.textContent);
+        clear();
+        dbRefList.orderByChild(sortingByColumnValue).startAt(partNumber.value).once('value', gotData, errorData);
+    }
+
     function clear() {
         // remove all tr from tbody (clear list in html)
         while (tbody.lastChild) {
             tbody.removeChild(tbody.lastChild);
         }
-        tbody.innerHTML = '';
     }
 
     function gotData(snap) {
@@ -149,7 +158,6 @@
         '<td class="partLength"></td>' +
         '<button class="deleteBtn">DELETE</button></td>' +
         '</tr>';
-
 
 
 // adding a new product to database
@@ -193,10 +201,7 @@
         materialType.value = '';
         partSize.value = '';
         partLength.value = '';
-
-        // partNumber.focus();
     }
-
 
     function testForm() {
         // TODO validating a form with regExp. !!!
@@ -212,4 +217,5 @@
     }
 
 
-}());
+
+})();
