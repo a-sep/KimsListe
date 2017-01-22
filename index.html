@@ -10,7 +10,8 @@
     <link href="css/main.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"/>
 
-    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.5/firebase.js"></script>
+
 </head>
 
 <body>
@@ -24,6 +25,7 @@
         <th>Material</th>
         <th>Diameter (mm)</th>
         <th>Længde (mm)</th>
+        <th>Bemærkning</th>
         <th>ACTION</th>
     </tr>
     <tr id="trInput">
@@ -34,6 +36,7 @@
             <td><input type="text" placeholder="diameter af råvare" name="partSize" required value="" id="partSize">
             </td>
             <td><input type="text" placeholder="længde" name="partLength" required value="" id="partLength"></td>
+            <td><input type="text" placeholder="bemærkning" name="info"  value="" id="partInfo"></td>
             <td>
                 <input type="submit" name="" value="ADD" id="addBtn">
                 <input type="reset" name="" value="RESET FORM" id="resetBtn">

@@ -1,6 +1,9 @@
 "use strict";
 (function KimsListe() {
 
+
+
+    // testing database:
     let config = {
         apiKey: "AIzaSyC_m6VaHDvrIRr3IlDPoMTKPZYE64NEGkw",
         authDomain: "kimsliste-ccf6a.firebaseapp.com",
@@ -19,6 +22,7 @@
     let materialType = document.getElementById('materialType');
     let partSize = document.getElementById('partSize');
     let partLength = document.getElementById('partLength');
+    let partInfo = document.getElementById('partInfo');
     let addBtn = document.getElementById('addBtn');
     let searchBtn = document.getElementById('searchBtn');
     let resetBtn = document.getElementById('resetBtn');
@@ -31,7 +35,7 @@
         findEntryByColumn(sortingByColumnValue);
     });
 
-    partNumber.addEventListener('keyup', findProductUsingInput);
+    // partNumber.addEventListener('keyup', findProductUsingInput);
 
 
     // editing and deleting
@@ -98,6 +102,9 @@
             case 'partLength':
                 message = 'Længde (mm)';
                 break;
+            case 'partInfo':
+                message = 'Bemærkning';
+                break;
             default:
                 message = 'default message from switch statment...';
         }
@@ -122,6 +129,7 @@
     function findProductUsingInput(event) {
         console.log('find input', event.key, partNumber.value, 'content', partNumber.textContent);
         clear();
+        // TODO pobrana tablice przeszukac po stronie klienta i wynik zapisac do nowej tablicy,
         dbRefList.orderByChild(sortingByColumnValue).startAt(partNumber.value).once('value', gotData, errorData);
     }
 
@@ -156,6 +164,7 @@
         '<td class="materialType"></td>' +
         '<td class="partSize"></td>' +
         '<td class="partLength"></td>' +
+        '<td class="partInfo"></td>' +
         '<button class="deleteBtn">DELETE</button></td>' +
         '</tr>';
 
@@ -171,7 +180,8 @@
                 partName: partName.value,
                 materialType: materialType.value,
                 partSize: partSize.value,
-                partLength: partLength.value
+                partLength: partLength.value,
+                partInfo: partInfo.value
             }).then(function () {
                 // Clear form text fields
                 resetForm();
@@ -180,7 +190,7 @@
                 findEntryByColumn(sortingByColumnValue);
             });
         } else {
-            console.log('...ups - entry correct values');
+            console.log('...ups - enter correct values');
         }
     }
 
@@ -201,11 +211,12 @@
         materialType.value = '';
         partSize.value = '';
         partLength.value = '';
+        partInfo.value = '';
     }
 
     function testForm() {
         // TODO validating a form with regExp. !!!
-
+        // 'info' field is not required to fill up
         if (partNumber.value === " " || partName.value === " " || materialType.value === " " || partSize.value === " " || partLength.value === " ") {
             return false;
         }
@@ -215,7 +226,6 @@
         }
         return true;
     }
-
 
 
 })();
