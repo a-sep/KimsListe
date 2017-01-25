@@ -1,10 +1,11 @@
 "use strict";
 (function KimsListe() {
 
+    // Initialize Firebase
 
 
-    // testing database:
-    let config = {
+    // // testing database:
+    const config = {
         apiKey: "AIzaSyC_m6VaHDvrIRr3IlDPoMTKPZYE64NEGkw",
         authDomain: "kimsliste-ccf6a.firebaseapp.com",
         databaseURL: "https://kimsliste-ccf6a.firebaseio.com",
@@ -14,29 +15,36 @@
     firebase.initializeApp(config);
 
 // create database references
-    let dbRefList = firebase.database().ref().child('cncProducts');
+    const dbRefList = firebase.database().ref().child('cncProducts');
 
 // get elements
-    let partNumber = document.getElementById('partNumber');
-    let partName = document.getElementById('partName');
-    let materialType = document.getElementById('materialType');
-    let partSize = document.getElementById('partSize');
-    let partLength = document.getElementById('partLength');
-    let partInfo = document.getElementById('partInfo');
-    let addBtn = document.getElementById('addBtn');
-    let searchBtn = document.getElementById('searchBtn');
-    let resetBtn = document.getElementById('resetBtn');
-    let tbody = document.getElementById('cncProductsList');
-    let trSorting = document.getElementById('trSorting');
+    const partNumber = document.getElementById('partNumber');
+    const partName = document.getElementById('partName');
+    const materialType = document.getElementById('materialType');
+    const partSize = document.getElementById('partSize');
+    const partLength = document.getElementById('partLength');
+    const partInfo = document.getElementById('partInfo');
+    const addBtn = document.getElementById('addBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const tbody = document.getElementById('cncProductsList');
+    const trSorting = document.getElementById('trSorting');
+
 
     addBtn.addEventListener('click', addToDatabase);
     resetBtn.addEventListener('click', resetForm);
-    searchBtn.addEventListener('click', function () {
+    refreshBtn.addEventListener('click', function () {
         findEntryByColumn(sortingByColumnValue);
     });
 
     // partNumber.addEventListener('keyup', findProductUsingInput);
 
+    function findProductUsingInput(event) {
+        console.log('find input', event.key, partNumber.value, 'content', partNumber.textContent);
+        clear();
+        // TODO pobrana tablice przeszukac po stronie klienta i wynik zapisac do nowej tablicy,
+        dbRefList.orderByChild(sortingByColumnValue).startAt(partNumber.value).once('value', gotData, errorData);
+    }
 
     // editing and deleting
     tbody.addEventListener('click', (e) => {
@@ -79,8 +87,6 @@
         findEntryByColumn(sortingByColumnValue);
         return sortingByColumnValue;
     });
-
-    // findEntryByColumn(sortingByColumnValue); // shows all products on start
 
     function updateProduct(productKey, entryKey, entryValue) {
         // console.log("update ", productKey, entryKey, entryValue);
@@ -126,13 +132,6 @@
         dbRefList.orderByChild(sortingByColumnValue).once('value', gotData, errorData);
     }
 
-    function findProductUsingInput(event) {
-        console.log('find input', event.key, partNumber.value, 'content', partNumber.textContent);
-        clear();
-        // TODO pobrana tablice przeszukac po stronie klienta i wynik zapisac do nowej tablicy,
-        dbRefList.orderByChild(sortingByColumnValue).startAt(partNumber.value).once('value', gotData, errorData);
-    }
-
     function clear() {
         // remove all tr from tbody (clear list in html)
         while (tbody.lastChild) {
@@ -164,7 +163,7 @@
         '<td class="materialType"></td>' +
         '<td class="partSize"></td>' +
         '<td class="partLength"></td>' +
-        '<td class="partInfo"></td>' +
+        '<td class="partInfo">---</td>' +
         '<button class="deleteBtn">DELETE</button></td>' +
         '</tr>';
 
@@ -211,7 +210,7 @@
         materialType.value = '';
         partSize.value = '';
         partLength.value = '';
-        partInfo.value = '';
+        partInfo.value = '---';
     }
 
     function testForm() {
@@ -227,5 +226,61 @@
         return true;
     }
 
+
+    // **************************************** LOGIN PART *******************************************************
+    // get elements
+    const txtEmail = document.getElementById('txtEmail');
+    const txtPassword = document.getElementById('txtPassword');
+    const btnLogIn = document.getElementById('btnLogIn');
+    const btnSignUp = document.getElementById('btnSignUp');
+    const btnLogOut = document.getElementById('btnLogOut');
+    const loginForm = document.getElementById('loginForm');
+    const logoutForm = document.getElementById('logoutForm');
+    let userEmail = document.getElementById('userEmail');
+
+    // Add login event
+    btnLogIn.addEventListener('click', e => {
+        // get email and password
+        const email = txtEmail.value;
+        const pass = txtPassword.value;
+        const auth = firebase.auth();
+
+        const promise = auth.signInWithEmailAndPassword(email, pass);
+        promise.catch(e => console.log(e.message));
+    });
+
+    // Add signup event
+    btnSignUp.addEventListener('click', e => {
+        // get email and password
+        const email = txtEmail.value;
+        const pass = txtPassword.value;
+        const auth = firebase.auth();
+
+        const promise = auth.createUserWithEmailAndPassword(email, pass);
+        promise.catch(e => console.log(e.message));
+
+        alert('Kontakt Artur for at oprette ny "user account"');
+    });
+
+    // Add logout event
+    btnLogOut.addEventListener('click', e => {
+        firebase.auth().signOut();
+    });
+
+    // Add a real time listener
+    firebase.auth().onAuthStateChanged(firebaseUser => {
+        if (firebaseUser) {
+            console.log(firebaseUser);
+            logoutForm.classList.remove('hide');
+            loginForm.classList.add('hide');
+            findEntryByColumn(sortingByColumnValue); // show all entry from databaase if user is logged in
+            userEmail.textContent = 'Logged in as ' + firebaseUser.email;
+        } else {
+            console.log('not logged in');
+            loginForm.classList.remove('hide');
+            logoutForm.classList.add('hide');
+            clear();
+        }
+    });
 
 })();

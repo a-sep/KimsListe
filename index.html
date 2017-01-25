@@ -7,15 +7,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Kim's Liste</title>
-    <link href="css/main.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"/>
+    <link href="css/main.css" rel="stylesheet">
 
     <script src="https://www.gstatic.com/firebasejs/3.6.5/firebase.js"></script>
 
 </head>
 
 <body>
-<h2 class="text-center">Kim's Liste <sub> ver. 1.0.0</sub></h2>
+<!-- login section -->
+<section id="loginSection">
+    <div id="loginForm">
+        <input id="txtEmail" type="email" placeholder="Email">
+        <input id="txtPassword" type="password" placeholder="Password">
+        <button id="btnLogIn">Log In</button>
+        <button id="btnSignUp">Sign Up</button>
+    </div>
+    <div id="logoutForm">
+        <button id="btnLogOut">Log Out</button>
+        <span id="userEmail"></span>
+    </div>
+</section>
+
+<!-- table section -->
+<h2 class="text-center">Kim's Liste <sub> ver. 1.0.1</sub></h2>
 <p class="text-center"><em>For at søge tryk</em> <strong>ctrl + f</strong></p>
 <table>
     <thead>
@@ -30,17 +45,17 @@
     </tr>
     <tr id="trInput">
         <form>
-            <td><input type="text" placeholder="varenummer" name="partNumber" value="" required id="partNumber"></td>
-            <td><input type="text" placeholder="varenavn" name="partName" value="" required id="partName"></td>
-            <td><input type="text" placeholder="material" name="materialType" value="" required id="materialType"></td>
-            <td><input type="text" placeholder="diameter af råvare" name="partSize" required value="" id="partSize">
+            <td><input id="partNumber" type="text" placeholder="varenummer" name="partNumber" value="" required></td>
+            <td><input id="partName" type="text" placeholder="varenavn" name="partName" value="" required></td>
+            <td><input id="materialType" type="text" placeholder="material" name="materialType" value="" required></td>
+            <td><input id="partSize" type="text" placeholder="diameter af råvare" name="partSize" required value="">
             </td>
-            <td><input type="text" placeholder="længde" name="partLength" required value="" id="partLength"></td>
-            <td><input type="text" placeholder="bemærkning" name="info"  value="" id="partInfo"></td>
+            <td><input id="partLength" type="text" placeholder="længde" name="partLength" required value=""></td>
+            <td><input id="partInfo" type="text" placeholder="bemærkning" name="info" value="---"></td>
             <td>
-                <input type="submit" name="" value="ADD" id="addBtn">
-                <input type="reset" name="" value="RESET FORM" id="resetBtn">
-                <input type="button" name="" value="REFRESH" id="searchBtn">
+                <input id="addBtn" type="submit" name="" value="ADD">
+                <input id="resetBtn" type="reset" name="" value="RESET FORM">
+                <input id="refreshBtn" type="button" name="" value="REFRESH">
             </td>
         </form>
     </tr>
